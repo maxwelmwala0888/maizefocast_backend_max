@@ -19,12 +19,18 @@ from database import get_db, init_db
 import crud
 
 # ─── CREATE THE APP (ONLY ONCE) ─────────────────────────────────────────────
+
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
+
+
 app = FastAPI(title="MaizeForecast API", version="6.0.0")
 
 # ─── ADD CORS MIDDLEWARE (ONLY ONCE) ────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://maizefocastapp.netlify.appp"],  # ✅ no slash# Your Netlify frontend
+    allow_origins=["https://maizefocastapp.netlify.apppp"],  # ✅ no slash# Your Netlify frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
