@@ -17,18 +17,21 @@ import traceback
 
 from database import get_db, init_db
 import crud
-from fastapi.middleware.cors import CORSMiddleware
+
+# ─── CREATE THE APP (ONLY ONCE) ─────────────────────────────────────────────
+app = FastAPI(title="MaizeForecast API", version="6.0.0")
+
+# ─── ADD CORS MIDDLEWARE (ONLY ONCE) ────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://verdant-meerkat-ceee34.netlify.app"],  # or later restrict to your frontend URL
+    allow_origins=["https://verdant-meerkat-ceee34.netlify.app"],  # Your Netlify frontend
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ─── APP ─────────────────────────────────────────────────────────────────────
-app = FastAPI(title="MaizeForecast API", version="6.0.0")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
-                   allow_methods=["*"], allow_headers=["*"])
+# ─── (Optional) Serve static files if needed later ──────────────────────────
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Global error handler
 @app.exception_handler(Exception)
