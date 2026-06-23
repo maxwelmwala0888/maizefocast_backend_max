@@ -17,6 +17,13 @@ import traceback
 
 from database import get_db, init_db
 import crud
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or later restrict to your frontend URL
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ─── APP ─────────────────────────────────────────────────────────────────────
 app = FastAPI(title="MaizeForecast API", version="6.0.0")
