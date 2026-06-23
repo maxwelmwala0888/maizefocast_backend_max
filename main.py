@@ -18,24 +18,28 @@ import traceback
 from database import get_db, init_db
 import crud
 
-# ─── CREATE THE APP (ONLY ONCE) ─────────────────────────────────────────────
+from fastapi import FastAPI
 
-@app.get("/api/health")
-def health():
-    return {"status": "ok"}
+# ... other imports ...
 
-
+# 1. CREATE THE APP INSTANCE FIRST
 app = FastAPI(title="MaizeForecast API", version="6.0.0")
 
-# ─── ADD CORS MIDDLEWARE (ONLY ONCE) ────────────────────────────────────────
+# 2. ADD CORS MIDDLEWARE (fix the typo in the URL!)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://maizefocastapp.netlify.apppp"],  # ✅ no slash# Your Netlify frontend
+    allow_origins=["https://maizefocastapp.netlify.app"],  # no extra 'p's
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# 3. THEN DEFINE YOUR ROUTES
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
+
+# ... rest of your routes ...
 # ─── (Optional) Serve static files if needed later ──────────────────────────
 # app.mount("/static", StaticFiles(directory="static"), name="static")
 
