@@ -24,7 +24,7 @@ app = FastAPI(title="MaizeForecast API", version="6.0.0")
 # ─── ADD CORS MIDDLEWARE (ONLY ONCE) ────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://timely-empanada-18156e.netlify.app/"],  # Your Netlify frontend
+    allow_origins=["https://maizefocastapp.netlify.app/"],  # Your Netlify frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
