@@ -20,7 +20,7 @@ import crud
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://verdant-meerkat-ceee34.netlify.app/"],  # or later restrict to your frontend URL
+    allow_origins=["*"],  # or later restrict to your frontend URL
     allow_methods=["*"],
     allow_headers=["*"],
 )
