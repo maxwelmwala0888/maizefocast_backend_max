@@ -42,7 +42,33 @@ def health():
 # ... rest of your routes ...
 # ─── (Optional) Serve static files if needed later ──────────────────────────
 # app.mount("/static", StaticFiles(directory="static"), name="static")
+@app.get("/api/locations")
+def get_locations():
+    try:
+        # Make sure clean_data.csv is in your repository root (or adjust path)
+        df = pd.read_csv("clean_data.csv")
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"detail": f"Could not load CSV: {str(e)}"})
 
+    hierarchy = {}
+    for _, row in df.iterrows():
+        region = str(row["adm1_name"]).strip()
+        district = str(row["adm2_name"]).strip()
+        market = str(row["mkt_name"]).strip()
+
+        if region not in hierarchy:
+            hierarchy[region] = {}
+        if district not in hierarchy[region]:
+            hierarchy[region][district] = []
+        if market not in hierarchy[region][district]:
+            hierarchy[region][district].append(market)
+
+    # Sort the lists for neat display
+    for region in hierarchy:
+        for district in hierarchy[region]:
+            hierarchy[region][district] = sorted(hierarchy[region][district])
+
+    return hierarchy
 # Global error handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
