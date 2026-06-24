@@ -42,33 +42,120 @@ def health():
 # ... rest of your routes ...
 # ─── (Optional) Serve static files if needed later ──────────────────────────
 # app.mount("/static", StaticFiles(directory="static"), name="static")
+# ─── COMPLETE LOCATION HIERARCHY (all 130 markets from MKT_ENCODING) ────────
+LOCATION_HIERARCHY = {
+    "Central Region": {
+        "Lilongwe": [
+            "Area 23", "Kamuzu Road", "Lilongwe", "Mitundu", "Nsundwe",
+            "Dzaleka", "Dzaleka (inside Camp)", "Kasiya", "Kamwendo",
+            "Mbela", "Chimbiya"
+        ],
+        "Dedza": [
+            "Bembeke turn off", "Golomoti", "Mtakataka", "Mayaka", "Ntonda",
+            "Thete"
+        ],
+        "Kasungu": [
+            "Chamama", "Chatoloma", "Kasungu Boma", "Santhe", "Nkhamenya",
+            "Chikuli", "Kambilonje"
+        ],
+        "Mchinji": [
+            "Mchinji Boma", "Mkanda", "Waliranji"
+        ],
+        "Ntcheu": [
+            "Lizulu", "Ntcheu Boma", "Ntowe", "Mangamba", "Phalula",
+            "Mbonechela"
+        ],
+        "Ntchisi": [
+            "Malomo", "Ntchisi Boma"
+        ],
+        "Dowa": [
+            "Dowa Boma", "Mponela", "Nambuma", "Madisi", "Nsungwi"
+        ],
+        "Salima": [
+            "Salima", "Sorgin", "Nkoma", "Chiponde", "Mpita", "Mpemba"
+        ],
+        "Nkhotakota": [
+            "Dwangwa", "Nkhotakota Boma"
+        ]
+    },
+    "Northern Region": {
+        "Mzimba": [
+            "Embangweni", "Euthini", "Jenda", "Manyamula", "Mzimba",
+            "Kamsonga", "Nserema"
+        ],
+        "Mzuzu City": [
+            "Mzuzu", "Lunyangwa", "Chibavi"
+        ],
+        "Karonga": [
+            "Chilumba", "Karonga Boma", "Songwe", "Bowe", "Bolero"
+        ],
+        "Rumphi": [
+            "Rumphi Boma", "Thavite", "Bolero", "Hewe"
+        ],
+        "Chitipa": [
+            "Chitipa Boma", "Kameme", "Misuku", "Nthalire", "Chilinga"
+        ],
+        "Nkhata Bay": [
+            "Chintheche", "Mpamba", "Nkhatabay Boma", "Nkhate", "Dyelatu",
+            "Limbuli"
+        ]
+    },
+    "Southern Region": {
+        "Blantyre": [
+            "Bvumbwe", "Limbe", "Lirangwe", "Lunzu", "Chirimba", "Mbaya",
+            "Soche", "Manase"
+        ],
+        "Zomba": [
+            "Jali", "Zomba Boma", "Chinamwali", "Mayaka", "Nanjiri",
+            "Ntonda"
+        ],
+        "Mangochi": [
+            "Makanjila", "Makanjira", "Mangochi Boma", "Mangochi Turn Off",
+            "Monkey Bay", "Namwera", "Ntaja", "Liwonde", "Malindi",
+            "Chikweo"
+        ],
+        "Balaka": [
+            "Balaka Boma", "Phalula", "Ulongwe", "Ntakataka", "Nsanama",
+            "Kankao"
+        ],
+        "Machinga": [
+            "Chikweo", "Liwonde", "Ntaja", "Mpita", "Nayuchi", "Nlukila"
+        ],
+        "Mulanje": [
+            "Chitakale", "Mulanje Boma", "Thondwe", "Muloza", "Chiringa",
+            "Mpala"
+        ],
+        "Thyolo": [
+            "Thyolo Boma", "Luchenza", "Chingazi"
+        ],
+        "Chiradzulu": [
+            "Chiradzulu Boma", "Namwera", "Mpira", "Nsoni"
+        ],
+        "Phalombe": [
+            "Phalombe Boma", "Mulomba", "Makhanga", "Chiringa"
+        ],
+        "Chikwawa": [
+            "Chikhwawa", "Ngabu", "Mwanza Boma", "Makhanga"
+        ],
+        "Nsanje": [
+            "Bangula", "Makhanga", "Nsanje Boma", "Marka", "Nchalo",
+            "Sharpevaley", "Tomali", "Vigwagwa", "Sorgin"
+        ],
+        "Neno": [
+            "Neno Boma", "Thekerani", "Ntowe", "Mwanza Boma"
+        ],
+        "Mwanza": [
+            "Mwanza Boma", "Khuwi", "Mwanza Cross"
+        ],
+        "Zomba City": [
+            "Zomba Boma", "Chinamwali", "Mponda"
+        ]
+    }
+}
+
 @app.get("/api/locations")
 def get_locations():
-    try:
-        # Make sure clean_data.csv is in your repository root (or adjust path)
-        df = pd.read_csv("clean_data.csv")
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"detail": f"Could not load CSV: {str(e)}"})
-
-    hierarchy = {}
-    for _, row in df.iterrows():
-        region = str(row["adm1_name"]).strip()
-        district = str(row["adm2_name"]).strip()
-        market = str(row["mkt_name"]).strip()
-
-        if region not in hierarchy:
-            hierarchy[region] = {}
-        if district not in hierarchy[region]:
-            hierarchy[region][district] = []
-        if market not in hierarchy[region][district]:
-            hierarchy[region][district].append(market)
-
-    # Sort the lists for neat display
-    for region in hierarchy:
-        for district in hierarchy[region]:
-            hierarchy[region][district] = sorted(hierarchy[region][district])
-
-    return hierarchy
+    return LOCATION_HIERARCHY
 # Global error handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
