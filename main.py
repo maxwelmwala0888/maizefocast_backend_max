@@ -28,7 +28,7 @@ app = FastAPI(title="MaizeForecast API", version="6.0.0")
 # 2. ADD CORS MIDDLEWARE (fix the typo in the URL!)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://maizefocastfinal.netlify.app"],  # no extra 'p's
+    allow_origins=["https://maizefocastfinal2.netlify.app"],  # no extra 'p's
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
