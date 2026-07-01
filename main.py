@@ -413,6 +413,60 @@ def sarimax_predict(inp: SarimaxInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.post("/api/sarimax-explain")
+def sarimax_explain(inp: SarimaxInput):
+    """Return prediction + SHAP values for each feature."""
+    try:
+        if PRE_TRAINED_MODEL is None:
+            raise HTTPException(status_code=503, detail="Model not loaded.")
+
+        # Build feature vector (same as make_prediction)
+        mkt_enc = MKT_ENCODING.get(inp.mkt, 0) if inp.mkt else 0
+        adm1_enc = ADM1_ENCODING.get(inp.adm1, 0) if inp.adm1 else 0
+        adm2_enc = ADM2_ENCODING.get(inp.adm2, 0) if inp.adm2 else 0
+
+        row = {
+            'year': inp.year,
+            'month': inp.month,
+            'infl': inp.infl if inp.infl is not None else 8.5,
+            'inflation_maize': inp.inflation_maize if inp.inflation_maize is not None else 8.5,
+            'trust_maize': inp.trust_maize if inp.trust_maize is not None else 0.9,
+            'c_rice': inp.c_rice if inp.c_rice is not None else 400,
+            'mkt_name_encoded': mkt_enc,
+            'adm1_name_encoded': adm1_enc,
+            'adm2_name_encoded': adm2_enc,
+        }
+        input_df = pd.DataFrame([row], columns=FEATURE_ORDER)
+
+        # Prediction
+        pred = float(PRE_TRAINED_MODEL.predict(input_df)[0])
+
+        # SHAP
+        import shap
+        explainer = shap.TreeExplainer(PRE_TRAINED_MODEL)
+        shap_values = explainer.shap_values(input_df)
+
+        # Normalize shape
+        if isinstance(shap_values, list):
+            shap_vals = shap_values[0] if len(shap_values) == 1 else shap_values
+        else:
+            shap_vals = shap_values
+
+        shap_vals = shap_vals.flatten().tolist()
+
+        return {
+            "predicted_price": round(pred, 2),
+            "features": FEATURE_ORDER,
+            "shap_values": [round(v, 4) for v in shap_vals],
+            "base_value": round(float(explainer.expected_value), 2),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/recommendations")
 def api_recommendations(region: str = "Central", db = Depends(get_db)):
     inp = SarimaxInput(year=datetime.now().year, month=datetime.now().month,
