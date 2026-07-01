@@ -9,3 +9,5 @@ python-multipart==0.0.9
 # PostgreSQL
 sqlalchemy==2.0.35
 psycopg2-binary==2.9.10
+
+shap
